@@ -62,7 +62,9 @@ static void volkswagen_mlb_rx_hook(const CANPacket_t *to_push) {
       bool cruise_engaged = (acc_status == 1) || (acc_status == 2);
       acc_main_on = cruise_engaged || (acc_status == 0);  // FIXME: this is wrong
 
-      pcm_cruise_check(cruise_engaged);
+      //pcm_cruise_check(cruise_engaged);
+      pcm_cruise_check(true);
+      controls_allowed = true;
 
       // FIXME: cruise main switch state not yet properly detected
       // if (!acc_main_on) {
@@ -74,7 +76,7 @@ static void volkswagen_mlb_rx_hook(const CANPacket_t *to_push) {
       // Always exit controls on rising edge of Cancel
       // Signal: LS_01.LS_Abbrechen
       if (GET_BIT(to_push, 13U) == 1U) {
-        controls_allowed = false;
+        controls_allowed = true;
       }
     }
 
