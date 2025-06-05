@@ -7,6 +7,7 @@
 #define MSG_HCA_01      0x126   // TX by OP, ADAS Heading Control Assist steering torque
 #define MSG_LDW_02      0x397   // TX by OP, ADAS Lane line recognition and text alerts
 #define MSG_LH_EPS_03   0x09F   // RX from EPS, for driver steering torque
+#define MSG_PLA_01      0x3D4   // TX by OP, experimentation signal only
 
 // MLB only messages
 #define MSG_ESP_03      0x103   // RX from ABS, for wheel speeds
