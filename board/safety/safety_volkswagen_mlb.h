@@ -62,7 +62,11 @@ static void volkswagen_mlb_rx_hook(const CANPacket_t *to_push) {
       bool cruise_engaged = (acc_status == 1) || (acc_status == 2);
       acc_main_on = cruise_engaged || (acc_status == 0);  // FIXME: this is wrong
 
-      pcm_cruise_check(cruise_engaged);
+      if (!volkswagen_longitudinal) {
+        pcm_cruise_check(cruise_engaged);
+      }
+
+      mads_acc_main_check(acc_main_on);
 
       // FIXME: cruise main switch state not yet properly detected
       // if (!acc_main_on) {
