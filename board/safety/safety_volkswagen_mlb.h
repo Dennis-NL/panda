@@ -60,10 +60,11 @@ static void volkswagen_mlb_rx_hook(const CANPacket_t *to_push) {
       // Signal: TSK_02.TSK_Status
       int acc_status = (GET_BYTE(to_push, 2) & 0x3U);
       bool cruise_engaged = (acc_status == 1) || (acc_status == 2);
+      acc_main_on = cruise_engaged || (acc_status == 0);  // FIXME: this is wrong
 
-      acc_main_on = cruise_engaged;
-
-      pcm_cruise_check(cruise_engaged);
+      if (!volkswagen_longitudinal) {
+        pcm_cruise_check(cruise_engaged);
+      }
 
       mads_acc_main_check(acc_main_on);
 
