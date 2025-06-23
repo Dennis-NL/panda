@@ -70,13 +70,13 @@ static void volkswagen_mlb_rx_hook(const CANPacket_t *to_push) {
       // }
     }
 
-    if (addr == MSG_LS_01) {
-      // Always exit controls on rising edge of Cancel
-      // Signal: LS_01.LS_Abbrechen
-      if (GET_BIT(to_push, 13U) == 1U) {
-        controls_allowed = false;
-      }
-    }
+    //if (addr == MSG_LS_01) {
+    //  // Always exit controls on rising edge of Cancel
+    //  // Signal: LS_01.LS_Abbrechen
+    //  if (GET_BIT(to_push, 13U) == 1U) {
+    //    controls_allowed = false;
+    //  }
+    //}
 
     // Signal: Motor_03.MO_Fahrpedalrohwert_01
     // Signal: Motor_03.MO_Fahrer_bremst
