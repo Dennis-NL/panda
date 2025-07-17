@@ -13,7 +13,7 @@ const SteeringLimits VOLKSWAGEN_MLB_STEERING_LIMITS = {
 };
 
 // Transmit of LS_01 is allowed on bus 0 and 2 to keep compatibility with gateway and camera integration
-const CanMsg VOLKSWAGEN_MLB_STOCK_TX_MSGS[] = {{MSG_HCA_01, 0, 8}, {MSG_LS_01, 0, 4}, {MSG_LS_01, 2, 4}, {MSG_LDW_02, 0, 8}};
+const CanMsg VOLKSWAGEN_MLB_STOCK_TX_MSGS[] = {{MSG_HCA_01, 0, 8}, {MSG_LS_01, 0, 4}, {MSG_LS_01, 2, 4}, {MSG_LDW_02, 0, 8}, {MSG_ACC_02, 0, 8}};
 
 RxCheck volkswagen_mlb_rx_checks[] = {
   {.msg = {{MSG_ESP_03, 0, 8, .check_checksum = false, .max_counter = 15U, .frequency = 50U}, { 0 }, { 0 }}},
@@ -21,6 +21,7 @@ RxCheck volkswagen_mlb_rx_checks[] = {
   {.msg = {{MSG_ESP_05, 0, 8, .check_checksum = false, .max_counter = 15U, .frequency = 50U}, { 0 }, { 0 }}},
   {.msg = {{MSG_TSK_02, 0, 8, .check_checksum = false, .max_counter = 15U, .frequency = 33U}, { 0 }, { 0 }}},
   {.msg = {{MSG_MOTOR_03, 0, 8, .check_checksum = false, .max_counter = 15U, .frequency = 100U}, { 0 }, { 0 }}},
+  {.msg = {{MSG_ACC_02, 2, 8, .check_checksum = false, .max_counter = 15U, .frequency = 17U}, {0}, {0}}},
 };
 
 
@@ -70,13 +71,13 @@ static void volkswagen_mlb_rx_hook(const CANPacket_t *to_push) {
       // }
     }
 
-    //if (addr == MSG_LS_01) {
-    //  // Always exit controls on rising edge of Cancel
-    //  // Signal: LS_01.LS_Abbrechen
-    //  if (GET_BIT(to_push, 13U) == 1U) {
-    //    controls_allowed = false;
-    //  }
-    //}
+    if (addr == MSG_LS_01) {
+      // Always exit controls on rising edge of Cancel
+      // Signal: LS_01.LS_Abbrechen
+      if (GET_BIT(to_push, 13U) == 1U) {
+        controls_allowed = false;
+      }
+    }
 
     // Signal: Motor_03.MO_Fahrpedalrohwert_01
     // Signal: Motor_03.MO_Fahrer_bremst
@@ -135,7 +136,7 @@ static int volkswagen_mlb_fwd_hook(int bus_num, int addr) {
       bus_fwd = 2;
       break;
     case 2:
-      if ((addr == MSG_HCA_01) || (addr == MSG_LDW_02)) {
+      if ((addr == MSG_HCA_01) || (addr == MSG_LDW_02) || (addr == MSG_ACC_02)) {
         // openpilot takes over LKAS steering control and related HUD messages from the camera
         bus_fwd = -1;
       } else {
