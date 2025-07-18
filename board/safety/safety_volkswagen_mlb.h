@@ -21,7 +21,6 @@ RxCheck volkswagen_mlb_rx_checks[] = {
   {.msg = {{MSG_ESP_05, 0, 8, .check_checksum = false, .max_counter = 15U, .frequency = 50U}, { 0 }, { 0 }}},
   {.msg = {{MSG_TSK_02, 0, 8, .check_checksum = false, .max_counter = 15U, .frequency = 33U}, { 0 }, { 0 }}},
   {.msg = {{MSG_MOTOR_03, 0, 8, .check_checksum = false, .max_counter = 15U, .frequency = 100U}, { 0 }, { 0 }}},
-  {.msg = {{MSG_ACC_02, 0, 8, .check_checksum = false, .max_counter = 15U, .frequency = 17U}, {0}, {0}}},
 };
 
 
@@ -138,6 +137,9 @@ static int volkswagen_mlb_fwd_hook(int bus_num, int addr) {
     case 2:
       if ((addr == MSG_HCA_01) || (addr == MSG_LDW_02)) {
         // openpilot takes over LKAS steering control and related HUD messages from the camera
+        bus_fwd = -1;
+      } else if (volkswagen_longitudinal && ((addr == MSG_ACC_02) || (addr == MSG_ACC_06) || (addr == MSG_ACC_07))) {
+        // openpilot takes over acceleration/braking control and related HUD messages from the stock ACC radar
         bus_fwd = -1;
       } else {
         // Forward all remaining traffic from Extended CAN devices to J533 gateway
